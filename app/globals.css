@@ -11,6 +11,21 @@
   font-family: "Manrope", sans-serif;
 }
 
+
+/* Custom properties for gradient colors */
+.text-gradient {
+  --gradient-color-1: #1b10eb;
+  --gradient-color-2: #23b8ee;
+
+  /* Set text color transparent */
+  color: transparent;
+
+  /* Apply gradient background and clip to text */
+  background-image: linear-gradient(45deg, var(--gradient-color-1), var(--gradient-color-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 /* START: General styles */
 .max-width {
   @apply max-w-[1440px] mx-auto;
