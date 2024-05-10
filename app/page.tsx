@@ -1,17 +1,33 @@
-import Image from "next/image";
-import { Hero, SearchBar, CustomFilter, CarCard } from "@/components";
-// import SearchBar from "@/components";
-import { fetchCars } from "@/utils";
-export default async function Home({searchParams}) {
-  const allCars = await fetchCars({
-    manufacturer:searchParams.manufacturer||"",
-    year:searchParams.year||2022,
-    fuel:searchParams.fuel||"",
-    limit:searchParams.limit||"",
-    model:searchParams.model,
-  });
+import { NextPage } from 'next';
+import { Hero, SearchBar, CustomFilter, CarCard } from '@/components';
+import { fetchCars } from '@/utils';
 
-  const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1 || !allCars;
+interface SearchParams {
+  manufacturer?: string;
+  year?: number;
+  fuel?: string;
+  limit?: number | undefined; // Update type definition to allow undefined
+  model?: string;
+}
+
+
+const Home: NextPage<{ searchParams: SearchParams }> = async ({ searchParams }) => {
+  const fetchData = async () => {
+    const allCars = await fetchCars({
+      manufacturer: searchParams.manufacturer || "",
+      year: searchParams.year || 2022,
+      fuel: searchParams.fuel || "",
+      limit: searchParams.limit || undefined,
+      model: searchParams.model,
+    });
+    return allCars;
+  };
+
+  const allCars = await fetchData();
+
+  const isDataEmpty =
+    !Array.isArray(allCars) || allCars.length < 1 || !allCars;
+
   return (
     <main className="overflow-hidden">
       <Hero />
@@ -23,25 +39,27 @@ export default async function Home({searchParams}) {
         <div className="home__filters">
           <SearchBar />
           <div className="home__filter-container">
-            <CustomFilter title="fuel" />
-            <CustomFilter title="year" />
+            {/* <CustomFilter title="fuel" />
+            <CustomFilter title="year" /> */}
           </div>
         </div>
         {!isDataEmpty ? (
           <section>
             <div className="home__cars-wrapper">
               {allCars?.map((car) => (
-                <CarCard car={car} />
+                <CarCard key={car.id} car={car} />
               ))}
             </div>
           </section>
         ) : (
-          <div className="homr__error-container">
-            <h2 className="text-black text-xl font-bold">oops, no cars</h2>
+          <div className="home__error-container">
+            <h2 className="text-black text-xl font-bold">Oops, no cars</h2>
             <p>{allCars?.message}</p>
           </div>
         )}
       </div>
     </main>
   );
-}
+};
+
+export default Home;
